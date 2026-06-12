@@ -187,12 +187,6 @@ Two tiers, so normal queries stay clean and the bonus still works:
 
 ---
 
-## Time spent
-
-**Roughly `<FILL IN>` hours.** _(Replace with your actual figure before submitting.)_
-
----
-
 ## AI usage report
 
 **Tool:** [Claude Code](https://www.anthropic.com/claude-code) (Claude Opus 4.x),
