@@ -10,6 +10,7 @@ import {
   WINDOW_MINUTES,
 } from "@/lib/config";
 import { getLiveboard, getStations } from "@/lib/irail";
+import { matchStations } from "@/lib/match";
 import type {
   DeparturesResponse,
   StationDepartures,
@@ -20,14 +21,9 @@ export async function searchDepartures(q: string): Promise<DeparturesResponse> {
   // May throw if the station list itself is unreachable — the route maps that to 502.
   const stations = await getStations();
 
-  const needle = q.toLowerCase();
-  const matched = stations
-    .filter(
-      (s) =>
-        s.standardname.toLowerCase().includes(needle) ||
-        s.name.toLowerCase().includes(needle),
-    )
-    .slice(0, MAX_STATIONS); // bound the fan-out for very broad queries
+  // Diacritic-insensitive, relevance-ranked match. Ranking happens before the
+  // cap so the strongest matches survive a broad query, not whichever 50 came first.
+  const matched = matchStations(q, stations).slice(0, MAX_STATIONS);
 
   const now = Math.floor(Date.now() / 1000);
   const windowEnd = now + WINDOW_MINUTES * 60;

@@ -46,6 +46,7 @@ function toDeparture(raw: IRailDeparture): Departure {
     scheduledTime: Number(raw.time), // epoch seconds (string → number)
     delayMinutes: Math.floor(Number(raw.delay) / 60), // seconds → whole minutes
     canceled: raw.canceled === "1",
+    platform: raw.platform ?? "",
   };
 }
 

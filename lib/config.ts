@@ -8,7 +8,7 @@ export const BASE_URL = "https://api.irail.be/v1";
 
 /** iRail asks for an identifying User-Agent (app/version (site; email)). */
 export const USER_AGENT =
-  "lagovia-train-tracker/1.0 (github.com/akshat; akshttt.dev@gmail.com)";
+  "lagovia-train-tracker/(github.com/akshat; akshttt.dev@gmail.com)";
 
 /** Input contract: queries shorter than this are rejected with 400. */
 export const MIN_QUERY_LENGTH = 3;
@@ -20,7 +20,7 @@ export const WINDOW_MINUTES = 15;
 export const MAX_CONCURRENCY = 3;
 
 /** Safety cap: a very broad substring could match many stations; bound the fan-out. */
-export const MAX_STATIONS = 20;
+export const MAX_STATIONS = 50;
 
 /** Station list barely changes — cache it this long (ms). */
 export const STATION_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h

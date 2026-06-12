@@ -33,6 +33,7 @@ export interface IRailDeparture {
   time: string;               // scheduled departure, Unix epoch seconds (as string!)
   delay: string;              // delay in SECONDS (as string!)
   canceled: string;           // "0" | "1"
+  platform?: string;          // platform number (string; may be absent)
   vehicleinfo: IRailVehicleInfo;
 }
 
@@ -57,6 +58,7 @@ export interface Departure {
   scheduledTime: number;   // Unix epoch seconds (number)
   delayMinutes: number;    // delay floored to whole minutes
   canceled: boolean;
+  platform: string;        // "" when iRail didn't provide one
 }
 
 /** Departures grouped under the origin station they leave from. */

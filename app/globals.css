@@ -1,26 +1,49 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-bg: #f4f5f8;     /* light-grey page so white cards pop */
+  --color-card: #ffffff;   /* card surface */
+  --color-paper: #eceef2;  /* subtle chips / platform pill */
+  --color-ink: #14161a;    /* near-black text */
+  --color-muted: #6b7280;  /* grey labels */
+  --color-line: #e3e5ea;   /* hairlines / borders */
+  --color-accent: #2563eb; /* signal blue — train numbers, on-time */
+  --color-danger: #dc2626; /* signal red — delays, cancellations */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-jetbrains), ui-monospace, monospace;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  cursor: default;
 }
+
+/* Force every element to inherit the default arrow instead of cursor: auto
+   (which shows a text I-beam when hovering text). */
+*,
+*::before,
+*::after {
+  cursor: inherit;
+}
+
+/* Pointer only for things you click */
+button:not(:disabled),
+a,
+[role="button"] {
+  cursor: pointer;
+}
+
+/* Text cursor only in the search field (when typing) */
+input,
+textarea {
+  cursor: text;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+.shimmer { animation: shimmer 1.3s ease-in-out infinite; }

@@ -1,65 +1,71 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { useDepartures } from "@/lib/useDepartures";
+import { Clock } from "@/components/Clock";
+import { SearchBar } from "@/components/SearchBar";
+import { StationBlock } from "@/components/StationBlock";
+import {
+  ErrorBanner,
+  IdleHero,
+  LoadingState,
+  NoResults,
+  WarningBanner,
+} from "@/components/States";
+import type { DeparturesResponse } from "@/lib/types";
 
 export default function Home() {
+  const [query, setQuery] = useState("");
+  const state = useDepartures(query);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="flex min-h-full flex-col">
+      <header className="border-b border-line bg-card">
+        <div className="flex items-center justify-between px-6 py-4">
+          <span className="text-2xl font-extrabold tracking-tight">LAGOVIA</span>
+          <Clock />
+        </div>
+      </header>
+
+      <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-10">
+        <h1 className="text-4xl font-extrabold uppercase leading-none tracking-tighter sm:text-5xl">
+          Lagovia Train Tracker
+        </h1>
+        <p className="mt-3 text-xs uppercase tracking-wide text-muted">
+          How late are the trains, exactly?
+        </p>
+
+        <div className="mt-7">
+          <SearchBar value={query} onChange={setQuery} />
+          <p className="mt-3 text-xs uppercase tracking-wide text-muted">
+            type at least 3 letters
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="mt-10">
+          {state.status === "idle" && <IdleHero onPick={setQuery} />}
+          {state.status === "loading" && <LoadingState />}
+          {state.status === "error" && <ErrorBanner message={state.message} />}
+          {state.status === "success" && <Results data={state.data} />}
         </div>
       </main>
+    </div>
+  );
+}
+
+function Results({ data }: { data: DeparturesResponse }) {
+  if (data.stations.length === 0) return <NoResults query={data.query} />;
+
+  return (
+    <div>
+      {data.warnings?.length ? <WarningBanner warnings={data.warnings} /> : null}
+      <p className="mb-8 text-xs uppercase tracking-wide text-muted">
+        {data.stations.length} of {data.stationsMatched} matched station
+        {data.stationsMatched === 1 ? "" : "s"} · next {data.windowMinutes} minutes
+      </p>
+      {data.stations.map((s) => (
+        <StationBlock key={s.stationId} station={s} />
+      ))}
     </div>
   );
 }
